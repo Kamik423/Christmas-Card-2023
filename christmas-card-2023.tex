@@ -1,0 +1,70 @@
+% !TEX program = xelatex
+\documentclass{article}
+\usepackage[margin=5mm,paperwidth=10.5cm,paperheight=16.85cm]{geometry}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage[ngerman]{babel}
+\usepackage{pgfpages}
+\usepackage{tikz, tikzpagenodes}
+\usetikzlibrary{calc}
+\setmainfont[Path=./fonts/,Extension=.otf,
+    UprightFont=*TextV1-Regular,ItalicFont=*TextV1-Italic,Scale=0.8]{Warbler}
+\definecolor{christmas}{HTML}{931111}
+\renewcommand{\c}[1]{{\textcolor{christmas}{#1}}}
+\pgfpagesdeclarelayout{christmas}{
+    \edef\pgfpageoptionheight{\the\paperheight}
+    \edef\pgfpageoptionwidth{\the\paperwidth}
+    \edef\pgfpageoptionborder{0pt}
+}{  \pgfpagesphysicalpageoptions{
+        logical pages=2, physical width=21cm, physical height=29.7cm
+    }\pgfpageslogicalpageoptions{2}{border shrink=\pgfpageoptionborder,
+        resized width=10.5cm, resized height=16.85cm,
+        center=\pgfpoint{.25\pgfphysicalwidth}{10cm}
+    }\pgfpageslogicalpageoptions{1}{border shrink=\pgfpageoptionborder,
+        resized width=10.5cm, resized height=16.85cm,
+        center=\pgfpoint{.75\pgfphysicalwidth}{10cm}
+    }
+}\pgfpagesuselayout{christmas}
+% \usepackage[a4,cam,cross]{crop}
+\begin{document} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newgeometry{left=4.25cm,right=1.72cm,top=6.9cm,bottom=3.5cm}%
+\pagenumbering{gobble}\centering%
+\begin{tikzpicture}[remember picture, overlay] \node[anchor=center]
+    at (current page.center) {
+        \includegraphics[width=0.9666\paperwidth]{background-creation/background.pdf}};
+    % https://commons.wikimedia.org/wiki/
+    % File:Household_stories_Bros_Grimm_(L_%26_W_Crane)_title_page.png
+\end{tikzpicture} % You are being loved <3
+\Large%
+Frohe Weihnachten\\
+\textit{\& ein glückliches}\\
+neues Jahr 2024
+
+\vfill
+
+wünschen\\
+\textit{von ganzem Herzen}\\
+Florentine \textit{\&} Hans
+
+\vfill\small
+
+{\itshape``
+    It is said that your life flashes before\\
+    your eyes just before you die.\\
+    That is true,\\
+    it's called Life.''
+}
+
+--Sir Terry Pratchett
+\newpage\restoregeometry %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstinputlisting[
+    language=TeX,morekeywords={begin,renewcommand,usepackage},
+    basicstyle=\tiny\ttfamily,
+    keywordstyle=\color{christmas},commentstyle=\color{darkgray}
+]{christmas-card-2023.tex} % code page / back side
+~\\[-2\baselineskip]\vfill
+{\small Typeset in Warbler Text in \LaTeX. Made With Love by Florentine and Hans.}
+% The source code and the images are available on
+% https://github.com/Kamik423/christmas-card-2023
+\end{document}
