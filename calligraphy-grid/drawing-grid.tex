@@ -1,0 +1,114 @@
+% !TEX program = xelatex
+
+\documentclass[a4paper]{article}
+
+\usepackage{fontspec}
+\setmainfont[Numbers=OldStyle]{Cochineal}
+
+\pagenumbering{gobble}
+\usepackage{contour}
+\usepackage{ifthen}
+
+\usepackage{xfp}
+\usepackage{siunitx}
+\sisetup{detect-all}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    __        __              ___ ___  ___  __   __    %
+%   |__)  /\  |__)  /\   |\/| |__   |  |__  |__) /__`   %
+%   |    /~~\ |  \ /~~\  |  | |___  |  |___ |  \ .__/   %
+%                                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pgfmathsetmacro\marginsinside{7.5mm}
+\pgfmathsetmacro\marginsoutside{7.5mm}
+
+\pgfmathsetmacro\gridwidth{9.5cm - \marginsoutside * 2pt}
+\pgfmathsetmacro\gridheight{15.8cm - \marginsoutside * 2pt}
+
+\pgfmathsetmacro\diagonalswidth{0.5pt}
+\pgfmathsetmacro\angle{atan(1/2)}
+
+\pgfmathsetmacro\exheight{3.333333mm}
+\pgfmathsetmacro\pitch{10mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Weihnachstkarte 2023}
+
+\pgfmathsetmacro\diagonalspacing{2mm}
+
+\pgfmathsetmacro\marginswidth{1pt}
+\pgfmathsetmacro\hlinewidth{0.5pt}
+\pgfmathsetmacro\outlinewidth{2pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\begin{tikzpicture}[remember picture, overlay]
+    % So the distance between the lines is measured perpendicular to them and not along the x-axis.
+    \pgfmathsetmacro\diagonalperpspacing{\diagonalspacing / cos(\angle)}
+    \begin{scope}[shift={($(current page.center) - (0.5 * \gridwidth pt, 0.5 * \gridheight pt)$)}]
+        % Outline box
+        \draw [line width=\outlinewidth pt] (0, 0)
+        -- (0, \gridheight pt)
+        -- (\gridwidth pt, \gridheight pt)
+        -- (\gridwidth pt, 0)
+        -- cycle;
+
+        % Diagonal Grid
+        \pgfmathsetmacro\linexoffset{tan(\angle) * \gridheight}
+        \pgfmathsetmacro\leftlinestart{\linexoffset * -1)}
+        \pgfmathsetmacro\leftsecondlinestart{\leftlinestart+\diagonalperpspacing}
+        \foreach \x in {\leftlinestart,\leftsecondlinestart,...,\gridwidth } {
+                \pgfmathsetmacro\rightx{\x + \linexoffset}
+                \pgfmathsetmacro\righty{(\gridwidth - \x) / tan(\angle)}
+                \draw \ifdim \x pt<0pt (0, -\gridheight * \x / \linexoffset pt) \else (\x pt, 0) \fi
+                -- \ifdim \gridwidth pt < \rightx pt (\gridwidth pt, \righty pt) \else (\rightx pt, \gridheight pt) \fi;
+            }
+
+        % Margins
+        \draw [line width=\marginswidth pt] (-\marginsoutside pt, -\marginsoutside pt)
+        -- (-\marginsoutside pt, \gridheight pt + \marginsoutside pt)
+        -- (\gridwidth pt + \marginsoutside pt, \gridheight pt + \marginsoutside pt)
+        -- (\gridwidth pt + \marginsoutside pt, -\marginsoutside pt)
+        -- cycle; % outside
+        \draw [line width=\marginswidth pt] (\marginsinside pt, \marginsinside pt)
+        -- (\marginsinside pt, \gridheight pt - \marginsinside pt)
+        -- (\gridwidth pt - \marginsinside pt, \gridheight pt - \marginsinside pt)
+        -- (\gridwidth pt - \marginsinside pt, \marginsinside pt)
+        -- cycle; % inside
+
+        % baselines
+        \pgfmathsetmacro\firstbaseline{\gridheight - \marginsinside}
+        \pgfmathsetmacro\secondbaseline{\gridheight - \marginsinside - \pitch}
+        \foreach \y in {\firstbaseline,\secondbaseline,...,-\marginsoutside} {
+                \draw [line width=\hlinewidth pt] (-\marginsoutside pt, \y pt) -- (\gridwidth pt + \marginsoutside pt, \y pt);
+            }
+
+        % exheights
+        \pgfmathsetmacro\firstexline{\gridheight - \marginsinside + \exheight}
+        \pgfmathsetmacro\secondexline{\gridheight - \marginsinside - \pitch + \exheight}
+        \foreach \y in {\firstexline,\secondexline,...,-\marginsoutside} {
+                \draw [line width=\hlinewidth pt] (-\marginsoutside pt, \y pt) -- (\gridwidth pt + \marginsoutside pt, \y pt);
+            }
+
+        % title
+        \node[anchor=south, inner sep=0] at (0.5 * \gridwidth pt, \gridheight pt + \marginsoutside pt) {
+            \makeatletter\contour{white}{
+                \@title
+                \textperiodcentered{}
+                \qtyproduct{\fpeval{round((\gridwidth + 2 * \marginsoutside) pt / 1cm, 2)} x \fpeval{round((\gridheight + 2 * \marginsoutside) pt / 1cm, 2)}}{\centi\meter}
+            }};
+        \node[anchor=south, inner sep=0] at (0.5 * \gridwidth pt, \gridheight pt) {\contour{white}{%
+                Pitch: \qty{\fpeval{round(\pitch pt / 1mm, 1)}}{\milli\meter},
+                x-Height: \qty{\fpeval{round(\exheight pt / 1mm, 1)}}{\milli\meter},
+                Pitch: \qty{\fpeval{round(\angle, 1)}}{\degree},
+                Margins: \qty{\fpeval{round(\marginsinside pt / 1cm, 2)}}{\centi\meter}/\qty{\fpeval{round((\marginsinside + \marginsoutside) pt / 1cm, 2)}}{\centi\meter}.
+            }};
+    \end{scope}
+\end{tikzpicture}
+\end{document}
